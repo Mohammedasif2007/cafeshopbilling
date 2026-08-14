@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Print Bill - Asif Cafe</title>
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bill-page">
+  <main class="bill-shell">
+    <div class="bill-container card receipt-card">
+      <div class="receipt-head">
+        <img src="assets/logo.svg" class="receipt-logo" alt="Asif Cafe">
+        <p class="eyebrow">Receipt</p>
+        <h1>Asif Cafe</h1>
+        <p>Thank you for visiting!</p>
+      </div>
+
+      <div class="bill-meta">
+        <p>Date: <span id="billDate"></span></p>
+        <p>Time: <span id="billTime"></span></p>
+      </div>
+
+      <div class="bill-table">
+        <div class="bill-row bill-header">
+          <span>Product</span>
+          <span>Quantity</span>
+          <span>Price</span>
+          <span></span>
+        </div>
+        <div id="billItems"></div>
+        <div class="bill-row bill-total-row">
+          <span>Total</span>
+          <span id="billTotalQty">0</span>
+          <span>&#8377;<span id="billTotal"></span></span>
+        </div>
+      </div>
+
+      <p class="visit-again">Visit again!</p>
+
+      <div class="bill-actions no-print">
+        <button type="button" onclick="printBill()">Print</button>
+        <button type="button" onclick="window.location.href='employee.html'">Add</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/bill.js"></script>
+</body>
+</html>

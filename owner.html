@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard - Asif Cafe</title>
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="owner-page">
+  <header class="owner-header">
+    <div>
+      <p class="header-kicker">Asif Cafe</p>
+      <h1>Owner Dashboard</h1>
+    </div>
+    <button class="logout-btn" onclick="logout()" aria-label="Logout">Logout</button>
+  </header>
+
+  <main class="container owner-dashboard">
+    <section class="owner-hero">
+      <div>
+        <p class="hero-kicker">Business overview</p>
+        <h2>Track sales, bills, and customer favourites in one place.</h2>
+      </div>
+      <div class="owner-badge">
+        <span>Live</span>
+        <strong>Sales Report</strong>
+      </div>
+    </section>
+
+    <div class="summary-grid">
+      <div class="card stat-card">
+        <div class="stat-icon stat-sales" aria-hidden="true">&#8377;</div>
+        <h3>Daily Sales</h3>
+        <div class="date-switcher" aria-label="Select date">
+          <button type="button" onclick="changeDate(-1)" aria-label="Previous day">&lt;&lt;</button>
+          <span id="selectedDateText"></span>
+          <button type="button" onclick="changeDate(1)" aria-label="Next day">&gt;&gt;</button>
+        </div>
+        <p id="todaySales">&#8377;0</p>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon stat-bills" aria-hidden="true">#</div>
+        <h3>Daily Bills</h3>
+        <p id="totalBills">0</p>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon stat-month" aria-hidden="true">M</div>
+        <h3>Monthly Sales</h3>
+        <p id="monthlySales">&#8377;0</p>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon stat-count" aria-hidden="true">B</div>
+        <h3>Monthly Bills</h3>
+        <p id="monthlyBills">0</p>
+      </div>
+    </div>
+
+    <section class="owner-content-grid">
+      <div class="card monthly-card">
+        <div class="dashboard-heading">
+          <div>
+            <p class="eyebrow">Ledger</p>
+            <h2>Monthly Sales Details</h2>
+            <p id="monthlyTitle" class="section-note"></p>
+          </div>
+          <label class="month-filter">
+            Month
+            <input type="month" id="monthFilter" onchange="renderOwnerDashboard()">
+          </label>
+        </div>
+        <div class="monthly-table">
+          <div class="monthly-row monthly-header">
+            <span>Date</span>
+            <span>Bills</span>
+            <span>Sales</span>
+          </div>
+          <div id="monthlySalesList"></div>
+        </div>
+      </div>
+
+      <div class="card favorite-card">
+        <div class="dashboard-heading compact-heading">
+          <div>
+            <p class="eyebrow">Demand</p>
+            <h2>Favourite Products</h2>
+            <p class="section-note">Top 6 highest sold products</p>
+          </div>
+        </div>
+        <div id="favoriteProductsChart" class="bar-chart"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer owner-footer">
+    <p>Asif Cafe business dashboard</p>
+  </footer>
+
+  <script src="js/owner.js"></script>
+</body>
+</html>

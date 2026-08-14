@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Panel - Asif Cafe</title>
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="employee-page">
+  <header class="owner-header employee-header">
+    <div>
+      <p class="header-kicker">Asif Cafe</p>
+      <h1>Order Counter</h1>
+    </div>
+    <button class="logout-btn" onclick="logout()" aria-label="Logout">Logout</button>
+  </header>
+
+  <main class="container employee-workspace">
+    <section class="menu-panel">
+      <div class="employee-hero">
+        <div>
+          <p class="hero-kicker">Quick billing</p>
+          <h2>Select products and prepare the bill.</h2>
+        </div>
+        <div class="counter-chip">Counter Ready</div>
+      </div>
+
+      <div class="search-box">
+        <label for="searchInput" class="eyebrow">Menu search</label>
+        <input type="text" id="searchInput" placeholder="Search products..." oninput="searchProducts()">
+      </div>
+
+      <div id="productList" class="product-grid"></div>
+    </section>
+    <button class="confirm-btn" onclick="finishOrder()">Confirm</button>
+  </main>
+
+  <footer class="site-footer app-footer">
+    <p>Follow us on</p>
+    <div class="social-links">
+      <a href="https://wa.me/919999999999" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19.05 4.91A9.74 9.74 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91a9.83 9.83 0 0 0-2.91-7.01ZM12.05 20.15h-.01a8.22 8.22 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.17 8.17 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 5.83 2.42 8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.13-.56.12-.17.25-.65.8-.79.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.38-1.73-.15-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.36-.77-1.86-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.01 2.56c.13.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.11-.23-.17-.48-.29Z"/>
+        </svg>
+      </a>
+      <a href="https://www.facebook.com/your-page" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 8.5V6.6c0-.82.2-1.3 1.28-1.3H17V2.14C16.7 2.1 15.68 2 14.5 2c-2.48 0-4.18 1.51-4.18 4.29V8.5H7.5V12h2.82v10H14V12h2.9l.46-3.5H14Z"/>
+        </svg>
+      </a>
+      <a href="https://www.instagram.com/your-profile" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6Zm9.65 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/>
+        </svg>
+      </a>
+    </div>
+  </footer>
+
+  <script src="js/employee.js"></script>
+</body>
+</html>
