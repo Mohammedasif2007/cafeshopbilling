@@ -23,9 +23,17 @@ const products = [
 ];
 
 let cart = [];
+let orderBeingFinished = false;
 
 function loadSavedBill() {
-  const savedBill = JSON.parse(localStorage.getItem('currentBill'));
+  let savedBill;
+  try {
+    savedBill = JSON.parse(localStorage.getItem('currentBill'));
+  } catch (error) {
+    console.error('Unable to read the saved bill.', error);
+    savedBill = null;
+  }
+
   if (savedBill && Array.isArray(savedBill.items) && savedBill.items.length) {
     cart = savedBill.items.map(item => ({ ...item }));
   } else {
@@ -157,42 +165,85 @@ function removeFromCart(productName) {
   renderCart();
 }
 
-function goToCurrentOrder() {
-  const orderPanel = document.querySelector('.order-panel');
-
-  if (orderPanel) {
-    orderPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-function goToProducts() {
-  const menuPanel = document.querySelector('.menu-panel');
-
-  if (menuPanel) {
-    menuPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+function areSameItems(firstItems, secondItems) {
+  return Array.isArray(firstItems) &&
+    Array.isArray(secondItems) &&
+    firstItems.length === secondItems.length &&
+    firstItems.every((item, index) =>
+      item.name === secondItems[index].name &&
+      Number(item.price) === Number(secondItems[index].price) &&
+      Number(item.qty) === Number(secondItems[index].qty)
+    );
 }
 
 function finishOrder() {
-  if (cart.length === 0) {
-    alert('Please add at least one item.');
+  if (cart.length === 0 || orderBeingFinished) {
+    if (cart.length === 0) {
+      alert('Please add at least one item.');
+    }
     return;
   }
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  let existingBill;
+  let sales;
 
+  try {
+    existingBill = JSON.parse(localStorage.getItem('currentBill'));
+    const storedSales = localStorage.getItem('sales');
+    sales = storedSales ? JSON.parse(storedSales) : [];
+  } catch (error) {
+    console.error('Unable to read saved sales or bill data.', error);
+    alert('The saved sales data could not be read. Please refresh and try again.');
+    return;
+  }
+
+  if (!Array.isArray(sales)) {
+    console.error('Saved sales data is not a list.');
+    alert('The saved sales data is invalid. Please contact the owner before continuing.');
+    return;
+  }
+
+  const billId = existingBill && existingBill.id
+    ? existingBill.id
+    : (window.crypto && typeof window.crypto.randomUUID === 'function'
+      ? window.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const legacySaleIndex = existingBill && !existingBill.id
+    ? sales.findIndex(sale =>
+      sale &&
+      !sale.id &&
+      sale.date === existingBill.date &&
+      Number(sale.total) === Number(existingBill.total) &&
+      areSameItems(sale.items, existingBill.items)
+    )
+    : -1;
   const bill = {
-    items: cart,
+    id: billId,
+    items: cart.map(item => ({ ...item })),
     total,
-    date: new Date().toLocaleString()
+    date: new Date().toISOString()
   };
 
-  localStorage.setItem('currentBill', JSON.stringify(bill));
+  const existingSaleIndex = legacySaleIndex !== -1
+    ? legacySaleIndex
+    : sales.findIndex(sale => sale && sale.id === billId);
+  if (existingSaleIndex === -1) {
+    sales.push(bill);
+  } else {
+    sales[existingSaleIndex] = bill;
+  }
 
-  const sales = JSON.parse(localStorage.getItem('sales')) || [];
-  sales.push(bill);
-  localStorage.setItem('sales', JSON.stringify(sales));
+  try {
+    localStorage.setItem('currentBill', JSON.stringify(bill));
+    localStorage.setItem('sales', JSON.stringify(sales));
+  } catch (error) {
+    console.error('Unable to save the completed bill.', error);
+    alert('The bill could not be saved. Please try again before leaving this page.');
+    return;
+  }
 
+  orderBeingFinished = true;
   window.location.href = 'bill.html';
 }
 
