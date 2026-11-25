@@ -1,8 +1,62 @@
 function getStoredBill() {
-  return JSON.parse(localStorage.getItem('currentBill')) || { items: [], total: 0, date: new Date().toLocaleString() };
+  try {
+    return JSON.parse(localStorage.getItem('currentBill')) || {
+      items: [],
+      total: 0,
+      date: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('Unable to read the current bill.', error);
+    return { items: [], total: 0, date: new Date().toISOString() };
+  }
 }
 
 let bill = getStoredBill();
+
+function parseBillDate(value) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const legacyDate = value.match(
+    /^\s*(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})(?:,\s*(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?)?\s*$/i
+  );
+  if (!legacyDate) {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  const first = Number(legacyDate[1]);
+  const second = Number(legacyDate[2]);
+  let year = Number(legacyDate[3]);
+  if (year < 100) {
+    year += year < 50 ? 2000 : 1900;
+  }
+
+  let day = first;
+  let month = second;
+  if (first <= 12 && second > 12) {
+    day = second;
+    month = first;
+  }
+
+  let hour = Number(legacyDate[4] || 0);
+  const minute = Number(legacyDate[5] || 0);
+  const secondOfMinute = Number(legacyDate[6] || 0);
+  const meridiem = legacyDate[7] && legacyDate[7].toUpperCase();
+  if (meridiem) {
+    if (hour < 1 || hour > 12) {
+      return null;
+    }
+    hour = hour % 12 + (meridiem === 'PM' ? 12 : 0);
+  }
+
+  const date = new Date(year, month - 1, day, hour, minute, secondOfMinute);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    return null;
+  }
+  return date;
+}
 
 function renderBill() {
   const billItems = document.getElementById('billItems');
@@ -45,14 +99,14 @@ function renderBill() {
   document.getElementById('billTotalQty').textContent = totalQty;
   document.getElementById('billTotal').textContent = total;
 
-  const billDateTime = new Date(bill.date);
-  if (Number.isNaN(billDateTime.getTime())) {
-    const [datePart, timePart = ''] = bill.date.split(',');
+  const billDateTime = parseBillDate(bill.date);
+  if (!billDateTime) {
+    const [datePart, timePart = ''] = String(bill.date || '').split(',');
     document.getElementById('billDate').textContent = datePart.trim();
     document.getElementById('billTime').textContent = timePart.trim();
   } else {
-    document.getElementById('billDate').textContent = billDateTime.toLocaleDateString();
-    document.getElementById('billTime').textContent = billDateTime.toLocaleTimeString();
+    document.getElementById('billDate').textContent = billDateTime.toLocaleDateString('en-IN');
+    document.getElementById('billTime').textContent = billDateTime.toLocaleTimeString('en-IN');
   }
 }
 
@@ -84,6 +138,20 @@ function decreaseQty(index) {
 
 function saveBill() {
   localStorage.setItem('currentBill', JSON.stringify(bill));
+  if (!bill.id) {
+    return;
+  }
+
+  const storedSales = localStorage.getItem('sales');
+  const sales = storedSales ? JSON.parse(storedSales) : [];
+  if (!Array.isArray(sales)) {
+    throw new Error('Saved sales data is not a list.');
+  }
+  const saleIndex = sales.findIndex(sale => sale && sale.id === bill.id);
+  if (saleIndex !== -1) {
+    sales[saleIndex] = { ...bill, items: bill.items.map(item => ({ ...item })) };
+    localStorage.setItem('sales', JSON.stringify(sales));
+  }
 }
 
 function printBill() {
@@ -100,12 +168,6 @@ function deleteItem(index) {
   bill.items.splice(index, 1);
   bill.total = bill.items.reduce((sum, item) => sum + item.price * item.qty, 0);
   saveBill();
-  renderBill();
-}
-
-function clearCurrentBill() {
-  localStorage.removeItem('currentBill');
-  bill = { items: [], total: 0, date: new Date().toLocaleString() };
   renderBill();
 }
 
